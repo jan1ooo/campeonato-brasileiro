@@ -6,7 +6,7 @@
 	"preScript":"",
 	"projectList":[],
 	"syncModel":{
-		"branch":"master",
+		"branch":"main",
 		"domain":"https://github.com",
 		"enabled":false,
 		"namingPolicy":"byDoc",
