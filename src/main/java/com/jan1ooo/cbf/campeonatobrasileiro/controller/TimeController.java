@@ -23,6 +23,11 @@ public class TimeController {
         return ResponseEntity.ok().body(service.findAll());
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<TimeDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(service.findById(id));
+    }
+
     @PostMapping
     public ResponseEntity<TimeDTO> postTime(@Valid @RequestBody TimeDTO time) {
         return ResponseEntity.status(201).body(service.save(time));

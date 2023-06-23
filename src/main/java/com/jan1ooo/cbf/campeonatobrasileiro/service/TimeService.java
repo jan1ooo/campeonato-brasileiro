@@ -5,6 +5,7 @@ import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.TimeMapper;
 import com.jan1ooo.cbf.campeonatobrasileiro.repository.TimeRepository;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,13 @@ public class TimeService {
                 .collect(Collectors.toList());
     }
 
-    public TimeDTO save(@Valid @NotNull TimeDTO time) {
-        return timeMapper.toDTO(repository.save(timeMapper.toEntity(time)));
+    public TimeDTO findById(@NotNull @Positive Long id) {
+        return repository.findById(id)
+                .map(timeMapper::toDTO)
+                .orElseThrow(() -> new RuntimeException());
     }
 
-    public TimeDTO findById(Long id) {
-        return null;
+    public TimeDTO save(@Valid @NotNull TimeDTO time) {
+        return timeMapper.toDTO(repository.save(timeMapper.toEntity(time)));
     }
 }
