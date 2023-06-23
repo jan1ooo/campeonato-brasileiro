@@ -1,23 +1,39 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.service;
 
-import com.jan1ooo.cbf.campeonatobrasileiro.entity.Time;
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.TimeDTO;
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.TimeMapper;
 import com.jan1ooo.cbf.campeonatobrasileiro.repository.TimeRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TimeService {
-
     @Autowired
-    public TimeRepository repository;
+    public final TimeRepository repository;
+    public final TimeMapper timeMapper;
 
-    public Time cadastrarTime(Time time) {
-        return repository.save(time);
+    public TimeService(TimeRepository repository, TimeMapper timeMapper) {
+        this.repository = repository;
+        this.timeMapper = timeMapper;
     }
 
-    public List<Time> listarTimes() {
-        return repository.findAll();
+    public List<TimeDTO> findAll() {
+        return repository.findAll()
+                .stream()
+                .map(timeMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public TimeDTO save(@Valid @NotNull TimeDTO time) {
+        return timeMapper.toDTO(repository.save(timeMapper.toEntity(time)));
+    }
+
+    public TimeDTO findById(Long id) {
+        return null;
     }
 }

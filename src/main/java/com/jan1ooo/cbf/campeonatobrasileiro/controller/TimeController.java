@@ -1,8 +1,9 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.controller;
 
-import com.jan1ooo.cbf.campeonatobrasileiro.entity.Time;
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.TimeDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.service.TimeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +19,12 @@ public class TimeController {
     private TimeService service;
 
     @GetMapping
-    public ResponseEntity<List<Time>> getTimes() {
-        return ResponseEntity.ok().body(service.listarTimes());
+    public ResponseEntity<List<TimeDTO>> getTimes() {
+        return ResponseEntity.ok().body(service.findAll());
     }
-    
+
     @PostMapping
-    public ResponseEntity<Time> postTime(@RequestBody Time time) {
-        return ResponseEntity.status(201).body(service.cadastrarTime(time));
+    public ResponseEntity<TimeDTO> postTime(@Valid @RequestBody TimeDTO time) {
+        return ResponseEntity.status(201).body(service.save(time));
     }
 }
