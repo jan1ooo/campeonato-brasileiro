@@ -9,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,9 +20,12 @@ public class Jogo {
 
     @Id
     private Long id_jogo;
+    private LocalDateTime data;
     private Integer golsTimeCasa;
-    private Integer golsTimeVisitante;
+    private Integer golsTimeFora;
     private Double publicoPagante;
+    private Boolean encerrado;
+    private Integer rodada;
 
     @ManyToOne
     @JoinColumn(name = "timeCasa")
@@ -28,6 +33,6 @@ public class Jogo {
 
     @ManyToOne
     @JoinColumn(name = "timeVisitante")
-    private Time timeVisitane;
+    private Time timeFora;
 }
 

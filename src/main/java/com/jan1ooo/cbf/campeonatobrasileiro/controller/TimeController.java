@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Tutorial", description = "Tutorial management APIs")
+@Tag(name = "Times", description = "API Times")
 @RestController
 @RequestMapping("/api/times")
 public class TimeController {
