@@ -5,8 +5,9 @@ import com.jan1ooo.cbf.campeonatobrasileiro.DTO.TimeDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.JogoMapper;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.TimeMapper;
 import com.jan1ooo.cbf.campeonatobrasileiro.entity.Jogo;
-import com.jan1ooo.cbf.campeonatobrasileiro.entity.Time;
 import com.jan1ooo.cbf.campeonatobrasileiro.repository.JogoRepository;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,8 +21,14 @@ public class JogoService {
 
     @Autowired
     private final JogoRepository jogoRepository;
+
+    @Autowired
     JogoMapper jogoMapper;
+
+    @Autowired
     TimeService timeService;
+
+    @Autowired
     TimeMapper timeMapper;
 
     public JogoService(JogoRepository jogoRepository) {
@@ -35,6 +42,10 @@ public class JogoService {
                 .collect(Collectors.toList());
     }
 
+    public JogoDTO create(@Valid @NotNull JogoDTO jogoDTO) {
+        return jogoMapper.toDTO(jogoRepository.save(jogoMapper.toEntity(jogoDTO)));
+    }
+
     public void gerarJogos(LocalDateTime primeiraRodada) {
         final List<TimeDTO> times = timeService.findAll();
         List<TimeDTO> all1 = new ArrayList<>();
@@ -44,7 +55,7 @@ public class JogoService {
 
         jogoRepository.deleteAll();
 
-        List<Jogo> jogos = new ArrayList<>();
+        List<JogoDTO> jogos = new ArrayList<>();
 
         int t = times.size();
         int m = times.size() / 2;
@@ -75,31 +86,35 @@ public class JogoService {
 
         jogos.forEach(jogo -> System.out.println(jogo));
 
+        for (JogoDTO jogo : jogos) {
+            jogoRepository.save(jogoMapper.toEntity(jogo));
+        }
 
-        jogoRepository.saveAll(jogos);
-
-        List<Jogo> jogos2 = new ArrayList<>();
+        List<JogoDTO> jogos2 = new ArrayList<>();
 
         jogos.forEach(jogo -> {
-            TimeDTO timeCasa = timeMapper.toDTO(jogo.getTimeCasa());
-            TimeDTO timeFora = timeMapper.toDTO(jogo.getTimeFora());
+            TimeDTO timeCasa = jogo.getTimeCasa();
+            TimeDTO timeFora = jogo.getTimeFora();
             jogos2.add(gerarJogo(jogo.getData().plusDays(7L * jogos.size()), jogo.getRodada() + jogos.size(), timeCasa, timeFora));
         });
-        jogoRepository.saveAll(jogos2);
+
+        for (JogoDTO jogo : jogos2) {
+            jogoRepository.save(jogoMapper.toEntity(jogo));
+        }
     }
 
-    private Jogo gerarJogo(LocalDateTime dataJogo, Integer rodada, TimeDTO timeCasa, TimeDTO timeFora) {
-        Time time1 = new Time(timeCasa.id_time(), timeCasa.nome(), timeCasa.sigla(), timeCasa.uf());
-        Time time2 = new Time(timeFora.id_time(), timeFora.nome(), timeFora.sigla(), timeFora.uf());
+    private JogoDTO gerarJogo(LocalDateTime dataJogo, Integer rodada, TimeDTO timeCasa, TimeDTO timeFora) {
         Jogo jogo = new Jogo();
-        jogo.setTimeCasa(time1);
-        jogo.setTimeFora(time2);
-        jogo.setRodada(rodada);
+        jogo.setId_jogo(1L);
+        jogo.setTimeCasa(timeMapper.toEntity(timeCasa));
+        jogo.setTimeFora(timeMapper.toEntity(timeFora));
+        jogo.setRodada(3);
         jogo.setData(dataJogo);
-        jogo.setEncerrado(false);
-        jogo.setGolsTimeCasa(0);
+        jogo.setGolsTimeCasa(3);
         jogo.setGolsTimeFora(0);
-        jogo.setPublicoPagante(0.0);
-        return jogo;
+        jogo.setPublicoPagante(40000);
+        jogo.setEncerrado(true);
+
+        return jogoMapper.toDTO(jogo);
     }
 }

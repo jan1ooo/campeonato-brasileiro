@@ -1,7 +1,10 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
@@ -22,4 +25,5 @@ public class Time {
 
     @Column(length = 2)
     private String uf;
+
 }

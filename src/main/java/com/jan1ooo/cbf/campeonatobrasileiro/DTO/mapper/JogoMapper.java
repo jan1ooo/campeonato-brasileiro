@@ -26,17 +26,17 @@ public class JogoMapper {
                 jogo.getTimeFora().getSigla(),
                 jogo.getTimeFora().getUf());
 
-        return new JogoDTO(
-                jogo.getId_jogo(),
-                jogo.getData(),
-                jogo.getGolsTimeCasa(),
-                jogo.getGolsTimeFora(),
-                jogo.getPublicoPagante(),
-                timeCasa,
-                timeFora,
-                jogo.getEncerrado(),
-                jogo.getRodada()
-        );
+        JogoDTO jogoDTO = new JogoDTO();
+        jogoDTO.setId_jogo(jogo.getId_jogo());
+        jogoDTO.setData(jogo.getData());
+        jogoDTO.setTimeCasa(timeCasa);
+        jogoDTO.setTimeFora(timeFora);
+        jogoDTO.setPublicoPagante(jogo.getPublicoPagante());
+        jogoDTO.setGolsTimeCasa(jogo.getGolsTimeCasa());
+        jogoDTO.setGolsTimeFora(jogo.getGolsTimeFora());
+        jogoDTO.setEncerrado(jogo.getEncerrado());
+
+        return jogoDTO;
     }
 
     public Jogo toEntity(JogoDTO jogoDTO) {
@@ -45,30 +45,30 @@ public class JogoMapper {
         }
 
         Jogo jogo = new Jogo();
-        if (jogoDTO.id_jogo() != null) {
+        if (jogoDTO.getId_jogo() != null) {
             jogo.setId_jogo(jogo.getId_jogo());
         }
 
         Time timeCasa = new Time(
-                jogoDTO.timeCasa().id_time(),
-                jogoDTO.timeCasa().nome(),
-                jogoDTO.timeCasa().sigla(),
-                jogoDTO.timeCasa().uf());
+                jogoDTO.getTimeCasa().id_time(),
+                jogoDTO.getTimeCasa().nome(),
+                jogoDTO.getTimeCasa().sigla(),
+                jogoDTO.getTimeCasa().uf());
 
         Time timeFora = new Time(
-                jogoDTO.timeFora().id_time(),
-                jogoDTO.timeFora().nome(),
-                jogoDTO.timeFora().sigla(),
-                jogoDTO.timeFora().uf());
+                jogoDTO.getTimeFora().id_time(),
+                jogoDTO.getTimeFora().nome(),
+                jogoDTO.getTimeFora().sigla(),
+                jogoDTO.getTimeFora().uf());
 
-        jogo.setData(jogoDTO.data());
-        jogo.setGolsTimeCasa(jogoDTO.golsTimeCasa());
-        jogo.setGolsTimeFora(jogoDTO.golsTimeFora());
-        jogo.setPublicoPagante(jogoDTO.publicoPagante());
+        jogo.setData(jogoDTO.getData());
+        jogo.setGolsTimeCasa(jogoDTO.getGolsTimeCasa());
+        jogo.setGolsTimeFora(jogoDTO.getGolsTimeFora());
+        jogo.setPublicoPagante(jogoDTO.getPublicoPagante());
         jogo.setTimeCasa(timeCasa);
         jogo.setTimeFora(timeFora);
-        jogo.setEncerrado(jogoDTO.encerrado());
-        jogo.setRodada(jogoDTO.rodada());
+        jogo.setEncerrado(jogoDTO.getEncerrado());
+        jogo.setRodada(jogoDTO.getRodada());
         return jogo;
     }
 }

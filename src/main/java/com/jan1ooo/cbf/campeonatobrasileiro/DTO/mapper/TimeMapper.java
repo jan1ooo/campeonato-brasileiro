@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class TimeMapper {
+
     public TimeDTO toDTO(Time time) {
         if (time == null) {
             return null;

@@ -21,14 +21,19 @@ public class JogoController {
     @Autowired
     private JogoService jogoService;
 
-    @PostMapping
-    public ResponseEntity<Void> gerarJogos() {
-        jogoService.gerarJogos(LocalDateTime.now());
-        return ResponseEntity.ok().build();
-    }
-
     @GetMapping
     public ResponseEntity<List<JogoDTO>> getJogos() {
         return ResponseEntity.ok().body(jogoService.findAll());
+    }
+
+//    @PostMapping
+//    public ResponseEntity<JogoDTO> save(@RequestBody JogoDTO jogoDTO) {
+//        return ResponseEntity.status(201).body(jogoService.create(jogoDTO));
+//    }
+
+    @PostMapping("/gerar-jogos")
+    public ResponseEntity<Void> gerarJogos() {
+        jogoService.gerarJogos(LocalDateTime.now());
+        return ResponseEntity.ok().build();
     }
 }

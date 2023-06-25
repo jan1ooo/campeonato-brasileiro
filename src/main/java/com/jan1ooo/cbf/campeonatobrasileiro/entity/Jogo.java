@@ -23,7 +23,7 @@ public class Jogo {
     private LocalDateTime data;
     private Integer golsTimeCasa;
     private Integer golsTimeFora;
-    private Double publicoPagante;
+    private Integer publicoPagante;
     private Boolean encerrado;
     private Integer rodada;
 

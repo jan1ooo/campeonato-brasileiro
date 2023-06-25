@@ -1,16 +1,18 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.DTO;
 
+import lombok.Data;
+
 import java.time.LocalDateTime;
 
-public record JogoDTO(
-        Long id_jogo,
-        LocalDateTime data,
-        Integer golsTimeCasa,
-        Integer golsTimeFora,
-        Double publicoPagante,
-        TimeDTO timeCasa,
-        TimeDTO timeFora,
-        Boolean encerrado,
-        Integer rodada
-) {
+@Data
+public class JogoDTO {
+    private Long id_jogo;
+    private LocalDateTime data;
+    private Integer golsTimeCasa;
+    private Integer golsTimeFora;
+    private Integer publicoPagante;
+    private TimeDTO timeCasa;
+    private TimeDTO timeFora;
+    private Boolean encerrado;
+    private Integer rodada;
 }
