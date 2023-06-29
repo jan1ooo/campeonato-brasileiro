@@ -1,9 +1,6 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +16,7 @@ import java.time.LocalDateTime;
 public class Jogo {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_jogo;
     private LocalDateTime data;
     private Integer golsTimeCasa;

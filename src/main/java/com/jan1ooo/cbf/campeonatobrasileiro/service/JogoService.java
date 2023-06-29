@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +36,7 @@ public class JogoService {
         this.jogoRepository = jogoRepository;
     }
 
-    public List<JogoDTO> findAll() {
+    public List<JogoDTO> obterJogos() {
         return jogoRepository.findAll()
                 .stream()
                 .map(jogoMapper::toDTO)
@@ -55,29 +56,29 @@ public class JogoService {
 
         jogoRepository.deleteAll();
 
-        List<JogoDTO> jogos = new ArrayList<>();
+        List<Jogo> jogos = new ArrayList<>();
 
         int t = times.size();
         int m = times.size() / 2;
         LocalDateTime dataJogo = primeiraRodada;
-        Integer rodada = 0;
+        AtomicReference<Integer> rodada = new AtomicReference<>(0);
         for (int i = 0; i < t - 1; i++) {
-            rodada = i + 1;
+            rodada.set(i + 1);
             for (int j = 0; j < m; j++) {
                 //Teste para ajustar o mando de campo
-                TimeDTO timeCasa;
-                TimeDTO timeFora;
+                TimeDTO time1;
+                TimeDTO time2;
                 if (j % 2 == 1 || i % 2 == 1 && j == 0) {
-                    timeCasa = times.get(t - j - 1);
-                    timeFora = times.get(j);
+                    time1 = times.get(t - j - 1);
+                    time2 = times.get(j);
                 } else {
-                    timeCasa = times.get(j);
-                    timeFora = times.get(t - j - 1);
+                    time1 = times.get(j);
+                    time2 = times.get(t - j - 1);
                 }
-                if (timeCasa == null) {
+                if (time1 == null) {
                     System.out.println("Time  1 null");
                 }
-                jogos.add(gerarJogo(dataJogo, rodada, timeCasa, timeFora));
+                jogos.add(jogoMapper.toEntity(gerarJogo(dataJogo, rodada.get(), time1, time2)));
                 dataJogo = dataJogo.plusDays(7);
             }
             //Gira os times no sentido horário, mantendo o primeiro no lugar
@@ -86,34 +87,29 @@ public class JogoService {
 
         jogos.forEach(jogo -> System.out.println(jogo));
 
-        for (JogoDTO jogo : jogos) {
-            jogoRepository.save(jogoMapper.toEntity(jogo));
-        }
+        jogoRepository.saveAll(jogos);
 
-        List<JogoDTO> jogos2 = new ArrayList<>();
+        List<Jogo> jogos2 = new ArrayList<>();
 
         jogos.forEach(jogo -> {
-            TimeDTO timeCasa = jogo.getTimeCasa();
-            TimeDTO timeFora = jogo.getTimeFora();
-            jogos2.add(gerarJogo(jogo.getData().plusDays(7L * jogos.size()), jogo.getRodada() + jogos.size(), timeCasa, timeFora));
+            Integer rod = jogos.size();
+            TimeDTO timeCasa = timeMapper.toDTO(jogo.getTimeFora());
+            TimeDTO timeFora = timeMapper.toDTO(jogo.getTimeCasa());
+            jogos2.add(jogoMapper.toEntity(gerarJogo(jogo.getData().plusDays(7L * jogos.size()), rod += 1, timeCasa, timeFora)));
         });
-
-        for (JogoDTO jogo : jogos2) {
-            jogoRepository.save(jogoMapper.toEntity(jogo));
-        }
+        jogoRepository.saveAll(jogos2);
     }
 
     private JogoDTO gerarJogo(LocalDateTime dataJogo, Integer rodada, TimeDTO timeCasa, TimeDTO timeFora) {
         Jogo jogo = new Jogo();
-        jogo.setId_jogo(1L);
         jogo.setTimeCasa(timeMapper.toEntity(timeCasa));
         jogo.setTimeFora(timeMapper.toEntity(timeFora));
-        jogo.setRodada(3);
+        jogo.setRodada(1);
         jogo.setData(dataJogo);
         jogo.setGolsTimeCasa(3);
         jogo.setGolsTimeFora(0);
         jogo.setPublicoPagante(40000);
-        jogo.setEncerrado(true);
+        jogo.setEncerrado(false);
 
         return jogoMapper.toDTO(jogo);
     }

@@ -21,15 +21,15 @@ public class JogoController {
     @Autowired
     private JogoService jogoService;
 
-    @GetMapping
-    public ResponseEntity<List<JogoDTO>> getJogos() {
-        return ResponseEntity.ok().body(jogoService.findAll());
-    }
-
 //    @PostMapping
 //    public ResponseEntity<JogoDTO> save(@RequestBody JogoDTO jogoDTO) {
 //        return ResponseEntity.status(201).body(jogoService.create(jogoDTO));
 //    }
+
+    @GetMapping
+    public ResponseEntity<List<JogoDTO>> obterJogos() {
+        return ResponseEntity.ok().body(jogoService.obterJogos());
+    }
 
     @PostMapping("/gerar-jogos")
     public ResponseEntity<Void> gerarJogos() {
