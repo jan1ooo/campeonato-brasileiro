@@ -113,4 +113,24 @@ public class JogoService {
 
         return jogoMapper.toDTO(jogo);
     }
+
+    public JogoDTO obterJogo(Long id) {
+        return jogoMapper.toDTO(jogoRepository.findById(id).get());
+    }
+
+    public JogoDTO finalizar(Long id, JogoDTO jogoDTO) {
+        JogoDTO jogo = obterJogo(id);
+        if (jogo.getEncerrado() || jogo.getId_jogo() == null) {
+            return null;
+        }
+        jogo.setGolsTimeFora(jogoDTO.getGolsTimeFora());
+        jogo.setGolsTimeCasa(jogoDTO.getGolsTimeFora());
+        jogo.setEncerrado(jogoDTO.getEncerrado());
+        jogo.setPublicoPagante(jogoDTO.getPublicoPagante());
+        jogoRepository.save(jogoMapper.toEntity(jogo));
+        return jogo;
+    }
+
+//    public Object obterClassificacao(Long id) {
+//    }
 }

@@ -5,10 +5,7 @@ import com.jan1ooo.cbf.campeonatobrasileiro.service.JogoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,11 +18,6 @@ public class JogoController {
     @Autowired
     private JogoService jogoService;
 
-//    @PostMapping
-//    public ResponseEntity<JogoDTO> save(@RequestBody JogoDTO jogoDTO) {
-//        return ResponseEntity.status(201).body(jogoService.create(jogoDTO));
-//    }
-
     @GetMapping
     public ResponseEntity<List<JogoDTO>> obterJogos() {
         return ResponseEntity.ok().body(jogoService.obterJogos());
@@ -34,6 +26,23 @@ public class JogoController {
     @PostMapping("/gerar-jogos")
     public ResponseEntity<Void> gerarJogos() {
         jogoService.gerarJogos(LocalDateTime.now());
+        return ResponseEntity.status(204).build();
+    }
+
+    @PostMapping("/finalizar/{id}")
+    public ResponseEntity<Boolean> finalizar(@PathVariable Long id, @RequestBody JogoDTO jogoDTO) {
+        ResponseEntity.status(204).body(jogoService.finalizar(id, jogoDTO));
         return ResponseEntity.ok().build();
+    }
+
+//    @GetMapping("/classificacao/{id}")
+//    public ResponseEntity<Void> classificacao(@PathVariable Long id) {
+//        ResponseEntity.ok().body(jogoService.obterClassificacao(id));
+//        return null;
+//    }
+
+    @GetMapping("/jogo/{id}")
+    public ResponseEntity<JogoDTO> obterJogo(@PathVariable Long id) {
+        return ResponseEntity.ok().body(jogoService.obterJogo(id));
     }
 }
