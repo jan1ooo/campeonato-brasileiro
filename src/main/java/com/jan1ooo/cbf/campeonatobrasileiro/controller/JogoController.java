@@ -30,8 +30,8 @@ public class JogoController {
     }
 
     @PostMapping("/finalizar/{id}")
-    public ResponseEntity<Boolean> finalizar(@PathVariable Long id, @RequestBody JogoDTO jogoDTO) {
-        ResponseEntity.status(204).body(jogoService.finalizar(id, jogoDTO));
+    public ResponseEntity<Void> finalizar(@PathVariable Long id, @RequestBody JogoDTO jogoDTO) throws Exception {
+        jogoService.finalizarJogo(id, jogoDTO);
         return ResponseEntity.ok().build();
     }
 
