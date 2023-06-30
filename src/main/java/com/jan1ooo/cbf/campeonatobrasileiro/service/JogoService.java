@@ -1,5 +1,6 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.service;
 
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.ClassificacaoDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.JogoDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.TimeDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.JogoMapper;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 @Service
@@ -130,6 +132,32 @@ public class JogoService {
         jogoRepository.save(jogo);
     }
 
-//    public Object obterClassificacao(Long id) {
-//    }
+    public ClassificacaoDTO obterClassificacao(Long id) {
+        ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
+        List<TimeDTO> times = timeService.findAll();
+
+        times.forEach(time -> {
+            List<JogoDTO> jogoTimeCasa = jogoRepository.findByTimeCasaAndEncerrado(time, true);
+            List<JogoDTO> jogoTimeFora = jogoRepository.findByTimeForaAndEncerrado(time, true);
+            AtomicReference<Integer> vitorias = new AtomicReference<>(0);
+            AtomicReference<Integer> empates = new AtomicReference<>(0);
+            AtomicReference<Integer> derrotas = new AtomicReference<>(0);
+            AtomicReference<Integer> golsMarcados = new AtomicReference<>(0);
+            AtomicReference<Integer> golsSofridos = new AtomicReference<>(0);
+            jogoTimeCasa.forEach(jogo -> {
+                if (jogo.getGolsTimeCasa() > jogo.getGolsTimeFora()) {
+                    vitorias.getAndSet(vitorias.get() + 1);
+                } else if (jogo.getGolsTimeCasa() < jogo.getGolsTimeFora()) {
+                    derrotas.getAndSet(derrotas.get() + 1);
+                } else {
+                    empates.getAndSet(empates.get() + 1);
+                }
+                golsMarcados.set(golsMarcados.get() + jogo.getGolsTimeCasa());
+                golsSofridos.set(golsSofridos.get() + jogo.getGolsTimeFora());
+            });
+            jogoTimeFora.forEach(jogo -> {
+            });
+        });
+        return classificacaoDTO;
+    }
 }
