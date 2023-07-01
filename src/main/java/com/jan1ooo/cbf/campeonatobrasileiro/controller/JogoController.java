@@ -26,6 +26,7 @@ public class JogoController {
 
     @PostMapping("/gerar-jogos")
     public ResponseEntity<Void> gerarJogos() {
+        jogoService.deleteAll();
         jogoService.gerarJogos(LocalDateTime.now());
         return ResponseEntity.status(204).build();
     }

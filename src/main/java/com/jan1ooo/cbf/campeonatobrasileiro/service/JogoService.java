@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -50,13 +51,13 @@ public class JogoService {
     }
 
     public void gerarJogos(LocalDateTime primeiraRodada) {
+        jogoRepository.deleteAll();
+
         final List<TimeDTO> times = timeService.findAll();
         List<TimeDTO> all1 = new ArrayList<>();
         List<TimeDTO> all2 = new ArrayList<>();
         all1.addAll(times);//.subList(0, times.size()/2));
         all2.addAll(times);//.subList(all1.size(), times.size()));
-
-        jogoRepository.deleteAll();
 
         List<Jogo> jogos = new ArrayList<>();
 
@@ -133,6 +134,10 @@ public class JogoService {
         jogoRepository.save(jogo);
     }
 
+    public void deleteAll() {
+        jogoRepository.deleteAll();
+    }
+
     public ClassificacaoDTO obterClassificacao() {
         ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
         List<TimeDTO> times = timeService.findAll();
@@ -179,6 +184,13 @@ public class JogoService {
             classificacaoTimeDTO.setJogos(derrotas.get() + empates.get() + vitorias.get());
             classificacaoDTO.getTimes().add(classificacaoTimeDTO);
         });
+
+        Collections.sort(classificacaoDTO.getTimes(), Collections.reverseOrder());
+        int posicao = 0;
+        for (ClassificacaoTimeDTO time : classificacaoDTO.getTimes()) {
+            time.setPosicao(posicao++);
+        }
+//        classificacaoDTO.getTimes().sort();
 
         return classificacaoDTO;
     }
