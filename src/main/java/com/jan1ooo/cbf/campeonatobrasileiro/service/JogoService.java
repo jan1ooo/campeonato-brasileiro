@@ -1,6 +1,7 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.service;
 
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.ClassificacaoDTO;
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.ClassificacaoTimeDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.JogoDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.TimeDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.mapper.JogoMapper;
@@ -132,13 +133,13 @@ public class JogoService {
         jogoRepository.save(jogo);
     }
 
-    public ClassificacaoDTO obterClassificacao(Long id) {
+    public ClassificacaoDTO obterClassificacao() {
         ClassificacaoDTO classificacaoDTO = new ClassificacaoDTO();
         List<TimeDTO> times = timeService.findAll();
 
         times.forEach(time -> {
-            List<JogoDTO> jogoTimeCasa = jogoRepository.findByTimeCasaAndEncerrado(time, true);
-            List<JogoDTO> jogoTimeFora = jogoRepository.findByTimeForaAndEncerrado(time, true);
+            List<Jogo> jogoTimeCasa = jogoRepository.findByTimeCasaAndEncerrado(timeMapper.toEntity(time), true);
+            List<Jogo> jogoTimeFora = jogoRepository.findByTimeForaAndEncerrado(timeMapper.toEntity(time), true);
             AtomicReference<Integer> vitorias = new AtomicReference<>(0);
             AtomicReference<Integer> empates = new AtomicReference<>(0);
             AtomicReference<Integer> derrotas = new AtomicReference<>(0);
@@ -156,8 +157,29 @@ public class JogoService {
                 golsSofridos.set(golsSofridos.get() + jogo.getGolsTimeFora());
             });
             jogoTimeFora.forEach(jogo -> {
+                if (jogo.getGolsTimeFora() > jogo.getGolsTimeCasa()) {
+                    vitorias.getAndSet(vitorias.get() + 1);
+                } else if (jogo.getGolsTimeFora() < jogo.getGolsTimeCasa()) {
+                    derrotas.getAndSet(derrotas.get() + 1);
+                } else {
+                    empates.getAndSet(empates.get() + 1);
+                }
+                golsMarcados.set(golsMarcados.get() + jogo.getGolsTimeFora());
+                golsSofridos.set(golsSofridos.get() + jogo.getGolsTimeCasa());
             });
+            ClassificacaoTimeDTO classificacaoTimeDTO = new ClassificacaoTimeDTO();
+            classificacaoTimeDTO.setId_time(time.id_time());
+            classificacaoTimeDTO.setTime(time.nome());
+            classificacaoTimeDTO.setPontos((vitorias.get() * 3) + empates.get());
+            classificacaoTimeDTO.setDerrotas(derrotas.get());
+            classificacaoTimeDTO.setEmpates(empates.get());
+            classificacaoTimeDTO.setVitorias(vitorias.get());
+            classificacaoTimeDTO.setGolsMarcados(golsMarcados.get());
+            classificacaoTimeDTO.setGolsSofridos(golsSofridos.get());
+            classificacaoTimeDTO.setJogos(derrotas.get() + empates.get() + vitorias.get());
+            classificacaoDTO.getTimes().add(classificacaoTimeDTO);
         });
+
         return classificacaoDTO;
     }
 }

@@ -1,5 +1,6 @@
 package com.jan1ooo.cbf.campeonatobrasileiro.controller;
 
+import com.jan1ooo.cbf.campeonatobrasileiro.DTO.ClassificacaoDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.DTO.JogoDTO;
 import com.jan1ooo.cbf.campeonatobrasileiro.service.JogoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -35,11 +36,10 @@ public class JogoController {
         return ResponseEntity.ok().build();
     }
 
-//    @GetMapping("/classificacao/{id}")
-//    public ResponseEntity<Void> classificacao(@PathVariable Long id) {
-//        ResponseEntity.ok().body(jogoService.obterClassificacao(id));
-//        return null;
-//    }
+    @GetMapping("/classificacao")
+    public ResponseEntity<ClassificacaoDTO> obterClassificacao() {
+        return ResponseEntity.ok().body(jogoService.obterClassificacao());
+    }
 
     @GetMapping("/jogo/{id}")
     public ResponseEntity<JogoDTO> obterJogo(@PathVariable Long id) {
